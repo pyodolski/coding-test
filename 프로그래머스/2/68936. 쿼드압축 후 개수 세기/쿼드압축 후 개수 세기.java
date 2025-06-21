@@ -1,31 +1,35 @@
+// 학번 : 22213489 이름 : 표주원
 class Solution {
-    int first = 0;
-    int secend = 0;
-    
-    public int[] solution(int [][] arr) {
-        int n = arr.length;
-        cmpr(arr, 0, 0, n);
-        return new int[]{first, secend};
+    public int[] solution(int[][] arr) {
+        int[] answer = new int[2]; // 0 1 배열 생성
+        // 분할 정복 시작
+        compress(arr, 0, 0, arr.length, answer);
+        return answer;
     }
-    private void cmpr(int[][] arr, int x, int y, int n) {
-        if (samecheck(arr, x, y, n)) {
-            if (arr[x][y] == 0) first++;
-            else secend++;
-            return;
-        }
-        cmpr(arr, x, y, n/2);
-        cmpr(arr, x + n/2, y, n/2);
-        cmpr(arr, x, y + n/2, n/2);
-        cmpr(arr, x + n/2, y + n/2, n/2);
-    }
-    
-    private boolean samecheck(int[][] arr, int x, int y, int n) {
-        int num = arr[x][y];
-        for (int i = x; i < x + n; i++) {
-            for (int j = y; j < y + n; j++) {
-                if (arr[i][j] != num) return false;
+    // 2차원 배열에서 값이 모두 같은지 확인하는 로직
+    private boolean checkSame(int[][] arr, int row, int col, int size) {
+        int value = arr[row][col];
+        for (int i = row; i < row + size; i++) {
+            for (int j = col; j < col + size; j++) {
+                if (arr[i][j] != value) {
+                    return false; 
+                }
             }
         }
         return true;
+    }
+
+    // 분할 정복 함수
+    private void compress(int[][] arr, int row, int col, int size, int[] answer) {
+        if (checkSame(arr, row, col, size)) {
+            answer[arr[row][col]]++; 
+            return;
+        }
+
+        int half = size / 2;
+        compress(arr, row, col, half, answer);                 // 좌상
+        compress(arr, row, col + half, half, answer);          // 우상
+        compress(arr, row + half, col, half, answer);          // 좌하
+        compress(arr, row + half, col + half, half, answer);   // 우하
     }
 }
